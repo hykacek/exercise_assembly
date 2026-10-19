@@ -162,8 +162,23 @@ def eulerian_path(graph, verbose=False):
             break
         if start_node is None:
             start_node = min(graph)
-            
+
     return hierholzer(graph, start_node, verbose=verbose)
-    
 
-
+def contigs(graph):
+    in_deg, out_deg = in_out_degree(graph)
+    contig_list = []
+    not_1in_1out = []
+    for v in graph:
+        if in_deg[v] != 1 or out_deg[v] != 1:
+            for neighbor in graph[v]:
+                not_1in_1out.append((v, neighbor))
+    for v, neighbor in not_1in_1out:
+        walk = [v, neighbor]
+        current = neighbor
+        while in_deg[current] == 1 and out_deg[current] == 1:
+            next_node = graph[current][0]
+            walk.append(next_node)
+            current = next_node
+        contig_list.append(spell_path(walk))
+        
