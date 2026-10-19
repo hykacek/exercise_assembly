@@ -132,3 +132,38 @@ def spell_path(nodes):
     for node in nodes[1:]:
         path += node[-1]
     return path
+
+def hierholzer(graph, start, verbose=False):
+    unused_edges = {u: sorted(neighbors) for u, neighbors in graph.items()}
+    walk = [start]
+    
+    while sum(len(edges) for edges in unused_edges.values()) > 0:
+        for i, node in enumerate(walk):
+            if unused_edges.get(node, []): 
+                start_node = node
+                sub_walk = [start_node]
+                
+                while unused_edges.get(start_node, []):
+                    next_node = unused_edges[start_node].pop(0)
+                    sub_walk.append(next_node)
+                    start_node = next_node
+                    
+                walk = walk[:i] + sub_walk + walk[i+1:]
+                break
+                
+    return walk
+
+def eulerian_path(graph, verbose=False):
+    start_node = None
+    in_deg, out_deg = in_out_degree(graph)
+    for v in graph:
+        if out_deg[v] - in_deg[v] == 1:
+            start_node = v
+            break
+        if start_node is None:
+            start_node = min(graph)
+            
+    return hierholzer(graph, start_node, verbose=verbose)
+    
+
+
